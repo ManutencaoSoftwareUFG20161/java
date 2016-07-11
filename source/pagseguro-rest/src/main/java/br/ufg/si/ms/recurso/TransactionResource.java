@@ -30,7 +30,7 @@ public class TransactionResource {
 
 			return Response.status(Status.ACCEPTED).entity(json).build();
 
-		catch (PagSeguroServiceException e) {
+		} catch (PagSeguroServiceException e) {
 			System.err.println(e.getMessage());
 			return Response.status(Status.BAD_REQUEST).build();
 		}
