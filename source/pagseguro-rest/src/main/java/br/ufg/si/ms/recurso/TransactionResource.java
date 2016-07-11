@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import br.com.uol.pagseguro.domain.Transaction;
 import br.com.uol.pagseguro.exception.PagSeguroServiceException;
 import br.com.uol.pagseguro.properties.PagSeguroConfig;
+import br.com.uol.pagseguro.service.NotificationService;
 import br.com.uol.pagseguro.service.TransactionSearchService;
 
 @Path("/transaction")
@@ -29,6 +30,26 @@ public class TransactionResource {
 			String json = gson.toJson(transaction, Transaction.class);
 
 			return Response.status(Status.ACCEPTED).entity(json).build();
+
+		} catch (PagSeguroServiceException e) {
+			System.err.println(e.getMessage());
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+	}
+
+	@GET
+	@Path("/notification/{codigo}")
+	public Response findByNotification(@PathParam("codigo") String codigo) {
+		Transaction transaction = null;
+
+		try {
+			transaction = NotificationService.checkTransaction(PagSeguroConfig.getAccountCredentials(),
+				codigo);
+
+			Gson gson = new Gson();
+			String json = gson.toJson(transaction, Transaction.class);
+
+			return Response.status(Status.OK).entity(json).build();
 
 		} catch (PagSeguroServiceException e) {
 			System.err.println(e.getMessage());
