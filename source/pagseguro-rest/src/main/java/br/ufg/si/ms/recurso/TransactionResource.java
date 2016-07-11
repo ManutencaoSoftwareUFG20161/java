@@ -56,4 +56,43 @@ public class TransactionResource {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 	}
+	
+	/**
+     * O parametrodata deve ser o valor Long da data em formato String
+     * @param dataInicial
+     * @param dataFinal
+     * @return
+     */
+    @GET
+    @Path("/{dataInicial}/{dataFinal}")
+    public Response searchByDate(@PathParam("dataInicial") String dataInicial,
+   							 @PathParam("dataFinal") String dataFinal) {
+
+   	 Date initialDate = new Date(new Long(dataInicial));
+   	 Date finalDate = new Date(new Long(dataFinal));
+
+   	 Integer page = Integer.valueOf(1);
+
+    	Integer maxPageResults = Integer.valueOf(10);
+
+    	TransactionSearchResult transactionSearchResult = null;
+
+    	try {
+   		 transactionSearchResult =TransactionSearchService.searchByDate(PagSeguroConfig.getAccountCredentials(),
+   		     	initialDate, finalDate, page, maxPageResults);
+
+   		 Gson gson = new Gson();
+   		 String resposta = gson.toJson(transactionSearchResult,TransactionSearchResult.class);
+
+   		 return Response.status(Status.OK).entity(resposta).build();
+
+   	 } catch (PagSeguroServiceException e) {
+   		 System.err.println("Deu problema na requisição");
+
+   		 return Response.status(Status.BAD_REQUEST).build();
+   	 }
+
+
+    }
+
 }
